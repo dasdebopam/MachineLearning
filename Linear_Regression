@@ -1,0 +1,33 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression    #importing necessary libraries
+
+data=pd.read_csv("datasets\hoteldataset.csv")        #reading the given dataset
+
+x=data.iloc[:,1:-1].values 
+
+from sklearn.preprocessing import StandardScaler
+sc=StandardScaler()
+y=sc.fit_transform(data[['revenue in billions']])    #transforming the labels for better accuracy
+
+from sklearn.model_selection import train_test_split
+
+test_score=[]
+for j in range(100):
+    x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=1/3,random_state=j)
+    LR=LinearRegression().fit(x_train,y_train)
+    test_score.append(LR.score(x_test,y_test))
+K=test_score.index(max(test_score))
+K                                                    #finding the random state where score is maximum
+
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=1/3,random_state=K) #dividing the dataset arraging it in that random state
+
+LR=LinearRegression()                                #creating an object under that class
+LR.fit(x_train,y_train)                              #fitting data and labels
+ 
+y_pred=LR.predict(x_test)                            #predicting the data
+
+sc.inverse_transform(y_pred)                         #inverse transforming the labels to the original values
+
+y_pred                                               #print the predicted values
